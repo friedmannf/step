@@ -8,6 +8,7 @@ from typing import List, Dict, Tuple
 from before_after_wrapper import before_after_wrapper, FuncManager
 
 LIT_START_TIME = 'start_time'
+LIT_ITERATION = 'iteration'
 
 
 def start(func_manager: FuncManager, *args: List, **kwargs: Dict) -> \
@@ -16,7 +17,11 @@ def start(func_manager: FuncManager, *args: List, **kwargs: Dict) -> \
 
     time = datetime.datetime.now()
     func_manager.mem[LIT_START_TIME] = time
-    func_manager.logger_function("%s: start at %s" % (str(func_manager.func), time))
+    if LIT_ITERATION not in func_manager.static_mem:
+        func_manager.static_mem[LIT_ITERATION] = 0
+    func_manager.static_mem[LIT_ITERATION] += 1
+    func_manager.logger_function("%i) %s: start at %s" % (
+        func_manager.static_mem[LIT_ITERATION], str(func_manager.func), time))
     return func_manager, args, kwargs
 
 
@@ -27,8 +32,8 @@ def stop(func_manager: FuncManager, *args: List, **kwargs: Dict) -> \
     time = datetime.datetime.now()
     start_time = func_manager.mem[LIT_START_TIME]
     dif = time - start_time
-    func_manager.logger_function("%s: stop  at %s; %s elapsed" %
-                                 (str(func_manager.func), time, dif))
+    func_manager.logger_function("%i) %s: stop  at %s; %s elapsed" %
+                                 (func_manager.static_mem[LIT_ITERATION], str(func_manager.func), time, dif))
     return func_manager, args, kwargs
 
 

@@ -15,6 +15,8 @@ def _logger_print(string: str):
 
 
 class FuncManager:
+    static_mem = dict()
+
     def __init__(self, func: Callable, logger_function: Callable = _logger_print):
         """ Holds function related data """
         self.func = func
