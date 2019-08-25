@@ -1,4 +1,8 @@
 # noinspection SpellCheckingInspection
+from collections import Callable
+
+from before_after_wrapper import FuncManager
+
 __author__ = "Felix Friedmann"
 __copyright__ = "Copyright 2019"
 
@@ -14,15 +18,19 @@ def _dummy_func():
     return DUMMY_FUNC_RESULT
 
 
+_log_mem = []
+
+
+class _DummyFuncManager(FuncManager):
+    def __init__(self, func: Callable):
+        """ Overridden FuncManager that logs to module-level variable for testing"""
+        super().__init__(func, logger_function=_log_mem.append)
+
+
 class TestStep(TestCase):
-    @patch('before_after_wrapper.FuncManager')
-    def test_step(self, mock_class):
+    @patch('before_after_wrapper.FuncManager', _DummyFuncManager)
+    def test_step(self):
+        # mock_class.func.set_return_value(1) #.func = 1
         step(_dummy_func)()
-        start_statements = 0
-        stop_statements = 0
-        for call in mock_class.mock_calls:
-            if "start at" in str(call):
-                start_statements += 1
-            if "stop  at" in str(call):
-                stop_statements += 1
-        self.assertTrue(start_statements == 1 and stop_statements == 1)
+        self.assertTrue("start at" in _log_mem[0])
+        self.assertTrue("stop  at" in _log_mem[1])

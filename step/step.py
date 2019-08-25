@@ -21,7 +21,7 @@ def start(func_manager: FuncManager, *args: List, **kwargs: Dict) -> \
         func_manager.static_mem[LIT_ITERATION] = 0
     func_manager.static_mem[LIT_ITERATION] += 1
     func_manager.logger_function("%i) %s: start at %s" % (
-        func_manager.static_mem[LIT_ITERATION], str(func_manager.func), time))
+        func_manager.static_mem[LIT_ITERATION], func_manager.func.__name__, time))
     return func_manager, args, kwargs
 
 
@@ -33,7 +33,7 @@ def stop(func_manager: FuncManager, *args: List, **kwargs: Dict) -> \
     start_time = func_manager.mem[LIT_START_TIME]
     dif = time - start_time
     func_manager.logger_function("%i) %s: stop  at %s; %s elapsed" %
-                                 (func_manager.static_mem[LIT_ITERATION], str(func_manager.func), time, dif))
+                                 (func_manager.static_mem[LIT_ITERATION], func_manager.func.__name__, time, dif))
     return func_manager, args, kwargs
 
 
